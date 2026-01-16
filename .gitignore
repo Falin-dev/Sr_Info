@@ -1,0 +1,18 @@
+# Environments
+backend/venv/
+.env
+
+# Python/Django
+__pycache__/
+*.pyc
+db.sqlite3
+backend/media/manuals/
+backend/chroma_db/
+
+# Node/React
+frontend/node_modules/
+frontend/build/
+.DS_Store
+
+# Local settings
+.vscode/
