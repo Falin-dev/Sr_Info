@@ -36,3 +36,36 @@ def ask_question(request):
 @api_view(['GET'])
 def health_check(request):
     return Response({"status": "ready"})
+
+@api_view(['GET'])
+def check_status(request):
+    """Checks if a manual has already been indexed in ChromaDB"""
+    try:
+        # Check if there are any documents in the collection
+        count = rag.collection.count()
+        return Response({
+            "is_uploaded": count > 0,
+            "count": count
+        })
+    except Exception as e:
+        return Response({"is_uploaded": False, "error": str(e)})
+@api_view(['POST'])
+def upload_manual(request):
+    if 'file' not in request.FILES:
+        return Response({"error": "No file"}, status=400)
+    
+    file = request.FILES['file']
+    file_name = "aprilia_manual.pdf" # Hardcode name to prevent duplicates
+    
+    # Delete old file if it exists to save space
+    if default_storage.exists(f"manuals/{file_name}"):
+        default_storage.delete(f"manuals/{file_name}")
+        # Optional: Clear the old vector database if you want a fresh start
+        # rag.client.delete_collection("aprilia_manual")
+        # rag.collection = rag.client.create_collection("aprilia_manual", ...)
+
+    file_path = default_storage.save(f"manuals/{file_name}", file)
+    full_path = default_storage.path(file_path)
+    
+    num_chunks = rag.load_pdf(full_path)
+    return Response({"message": "Manual ready!"})
