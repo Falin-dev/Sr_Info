@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const API_URL = 'http://127.0.0.1:8000/api';
@@ -10,6 +10,21 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const checkManualStatus = async () => {
+      try {
+        const response = await fetch(API_URL + '/status/');
+        const data = await response.json();
+        if (data.is_uploaded) {
+          setUploaded(true); // Skip upload screen if manual exists
+        }
+      } catch (error) {
+        console.error("Error checking status:", error);
+      }
+    };
+    checkManualStatus();
+  }, []);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
