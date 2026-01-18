@@ -107,7 +107,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🛵 Aprilia SR125 Assistant</h1>
+        <h1>SR Info</h1>
         <p>Your Personal Scooter Manual Chatbot</p>
       </header>
 
